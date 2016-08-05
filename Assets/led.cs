@@ -28,4 +28,12 @@ public class led : MonoBehaviour {
     {
         b = value;
     }
+
+	public void setRGB(float newR, float newG, float newB)
+	{
+		r = newR;
+		g = newG;
+		b = newB;
+	}
+
 }
