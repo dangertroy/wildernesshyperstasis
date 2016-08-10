@@ -6,7 +6,7 @@ public class lightbar : MonoBehaviour {
     public GameObject[] leds = new GameObject[12];
     public float timer = 0f;
     public float newR, newG, newB, modeDelayTime;
-    public enum mode { RANDOM, FIRE, RAIN, OFF}
+    public enum mode { RANDOM, FIRE, RAIN, WIND, OFF, ON, CASCADE}
     public mode MyMode;
     // Use this for initialization
 	void Start () {
@@ -43,6 +43,10 @@ public class lightbar : MonoBehaviour {
 		{
 			offMode();
 		}
+		else if (MyMode == mode.ON)
+		{
+			onMode();
+		}
     }
 
     void randomMode() {
@@ -68,9 +72,9 @@ public class lightbar : MonoBehaviour {
 		}
     }
 
-    void offMode()
-    {
-        modeDelayTime = 1f;
+	void offMode()
+	{
+		modeDelayTime = 1f;
 		for(int i = 0; i < leds.Length; i++)
 		{
 			newR = 0f;
@@ -78,7 +82,36 @@ public class lightbar : MonoBehaviour {
 			newB = 0f;
 			leds[i].GetComponent<led>().setRGB(newR, newG, newB);
 		}
-    }
+	}
+
+	void onMode()
+	{
+		modeDelayTime = 1f;
+		for(int i = 0; i < leds.Length; i++)
+		{
+			newR = 1f;
+			newG = 1f;
+			newB = 1f;
+			leds[i].GetComponent<led>().setRGB(newR, newG, newB);
+		}
+	}
+
+	void windMode(float delayTime)
+	{
+		modeDelayTime = delayTime;
+		StartCoroutine ("wind");
+	}
+
+	IEnumerator wind()
+	{
+		float delayTime = modeDelayTime / leds.Length;
+		for (int i = leds.Length; i >= 0; i--) {
+			leds [i].GetComponent<led> ().setRGB (0f, 1f, Random.Range(0f, 0.4f));
+			yield return new WaitForSeconds (delayTime);
+			leds [i].GetComponent<led> ().setRGB (0f, 0f, 0f);
+		}
+	}
+
 
 	void rainMode(float delayTime)
 	{
@@ -90,10 +123,8 @@ public class lightbar : MonoBehaviour {
 	{
 		float delayTime = modeDelayTime / leds.Length;
 		for (int i = 0; i < leds.Length; i++) {
-			leds [i].GetComponent<led> ().setRGB (1f, 1f, 1f);
-			Debug.Log ("Entering wait " + Time.time);
+			leds [i].GetComponent<led> ().setRGB (0f, 0.2f, 1f);
 			yield return new WaitForSeconds (delayTime);
-			Debug.Log ("Return from wait " + Time.time);
 			leds [i].GetComponent<led> ().setRGB (0f, 0f, 0f);
 		}
 	}
